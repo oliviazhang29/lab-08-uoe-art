@@ -1,7 +1,7 @@
 ---
 title: "Lab 08 - University of Edinburgh Art Collection"
-author: "Insert your name here"
-date: "Insert date here"
+author: "Olivia Zhang"
+date: "03/26/2025"
 output: github_document
 ---
 
@@ -17,8 +17,7 @@ library(skimr)
 Now, load the dataset. If your data isn't ready yet, you can leave `eval = FALSE` for now and update it when needed.  
 
 
-```{r load-data, message = FALSE, eval = FALSE}
-# Remove eval = FALSE or set it to TRUE once data is ready to be loaded
+```{r load-data, message = FALSE}
 uoe_art <- read_csv("data/uoe-art.csv")
 ```
 
@@ -29,28 +28,78 @@ Let's start working with the **title** column by separating the title and the da
 ```{r separate-title-date, error = TRUE}
 uoe_art <- uoe_art %>%
   separate(title, into = c("title", "date"), sep = "\\(") %>%
-  mutate(year = str_remove(date, "\\)") %>% as.numeric()) %>%
-  select(title, artist, year, ___)  # Fill in the missing variable!
+  mutate(year = as.numeric(str_remove(date, "\\)"))) %>%
+  select(title, artist, year, link)  
 ```
-
-Make sure to replace `___` with the appropriate column name.  
 
 
 ## Exercise 10  
 
-*Write your answer here.*  
-
-Feel free to add code chunks as needed. Don't forget to label your code chunk.
+The warnings mean that: 1) there are some missing values in the date column, which is normal, because not all names have dates come after them; 2) not all things comes after the names in the parentheses is years or numbers, so as.numeric function doesn't work for all items in year. It only work for items that only contains year as numbers without other strings. 
 
 
 ## Exercise 11  
 
+```{r skim-uoe-art}
+skim(uoe_art)
+```
 
-*Continue with the same structure as above.*
+The artist info misses 111 data points, and the year info misses 1575 data points.
 
-You're doing great—keep going! Follow the same format and add your response below.  
+## Exercise 12
 
+Make a histogram of years. Use a reasonable bin width. Do you see anything out of the ordinary?
 
-## Additional Exercises  
+```{r hist-year}
+uoe_art %>%
+  ggplot(aes(x = year)) +
+  geom_histogram()
+```
 
-Almost there! Keep building on your work and follow the same structure for any remaining exercises. Each exercise builds on the last, so take your time and make sure your code is working as expected.  
+There is one outlier that's closer to 0 that makes the x axis really stretched out.
+
+## Exercise 13
+
+```{r correct}
+#find out the wrong year
+table(uoe_art$year)
+uoe_art %>% filter(year == 2)
+
+#correct it 
+uoe_art$year <- ifelse(uoe_art$year == 2, 1964, uoe_art$year)
+#check
+table(uoe_art$year)
+
+#plot
+uoe_art %>%
+  ggplot(aes(x = year)) +
+  geom_histogram()
+```
+
+The code didn't capture the correct year information because the original title was Death Mask (2) (1964), which confused the code to think that the first number after ( was the year we are looking for.
+
+## Exercise 14
+
+```{r artist}
+uoe_art %>% 
+  count(artist) %>%
+  arrange(desc(n))
+```
+
+The most featured artist is "Unknown." I'm not sure why the university has so many pieces from Unknown artists, but I looked up in their website. They say: " The early stages of this collecting were closely linked with galvanising the institution’s identity and status as a place of learning and inspiration, through the commissioning and collecting of portraits and busts of Professors and key alumni." So I guess they may not know all the artists that created the portraits and busts.
+
+## Exercise 15
+
+Final question! How many art pieces have the word “child” in their title? See if you can figure it out, and ask for help if not.
+
+Hint: You can use a combination of filter() and str_detect(). You will want to read the help for str_detect() at a minimum, and consider how you might capture titles where the word appears as “child” and “Child”.
+
+```{r child}
+child_count <- uoe_art %>%
+  filter(
+    str_detect(title, regex("child", ignore_case = TRUE))
+  ) %>%
+  count()
+```
+
+There are `r child_count` art pieces have the word "child" in their title.
