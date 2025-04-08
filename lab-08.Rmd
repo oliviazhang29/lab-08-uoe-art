@@ -7,15 +7,14 @@ output: github_document
 
 ## Load Packages and Data  
 
-First, let's load the necessary packages:  
+Load the necessary packages:  
 
 ```{r load-packages, message = FALSE}
 library(tidyverse) 
 library(skimr)
 ```
 
-Now, load the dataset. If your data isn't ready yet, you can leave `eval = FALSE` for now and update it when needed.  
-
+Now, load the dataset.
 
 ```{r load-data, message = FALSE}
 uoe_art <- read_csv("data/uoe-art.csv")
@@ -35,7 +34,7 @@ uoe_art <- uoe_art %>%
 
 ## Exercise 10  
 
-The warnings mean that: 1) there are some missing values in the date column, which is normal, because not all names have dates come after them; 2) not all things comes after the names in the parentheses is years or numbers, so as.numeric function doesn't work for all items in year. It only work for items that only contains year as numbers without other strings. 
+The warnings mean that: 1) there are some missing values in the date column, which is normal, because not all names have dates come after them; 2) not everything following the names in parentheses consists of years or numbers, so the as.numeric function doesn’t work for all items in the year info. It only works for items that contain only numeric years without additional strings. 
 
 
 ## Exercise 11  
@@ -48,12 +47,10 @@ The artist info misses 111 data points, and the year info misses 1575 data point
 
 ## Exercise 12
 
-Make a histogram of years. Use a reasonable bin width. Do you see anything out of the ordinary?
-
 ```{r hist-year}
 uoe_art %>%
   ggplot(aes(x = year)) +
-  geom_histogram()
+  geom_histogram(binwidth = 30)
 ```
 
 There is one outlier that's closer to 0 that makes the x axis really stretched out.
@@ -73,7 +70,7 @@ table(uoe_art$year)
 #plot
 uoe_art %>%
   ggplot(aes(x = year)) +
-  geom_histogram()
+  geom_histogram(binwidth = 20)
 ```
 
 The code didn't capture the correct year information because the original title was Death Mask (2) (1964), which confused the code to think that the first number after ( was the year we are looking for.
@@ -89,10 +86,6 @@ uoe_art %>%
 The most featured artist is "Unknown." I'm not sure why the university has so many pieces from Unknown artists, but I looked up in their website. They say: " The early stages of this collecting were closely linked with galvanising the institution’s identity and status as a place of learning and inspiration, through the commissioning and collecting of portraits and busts of Professors and key alumni." So I guess they may not know all the artists that created the portraits and busts.
 
 ## Exercise 15
-
-Final question! How many art pieces have the word “child” in their title? See if you can figure it out, and ask for help if not.
-
-Hint: You can use a combination of filter() and str_detect(). You will want to read the help for str_detect() at a minimum, and consider how you might capture titles where the word appears as “child” and “Child”.
 
 ```{r child}
 child_count <- uoe_art %>%

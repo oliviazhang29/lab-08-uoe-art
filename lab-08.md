@@ -5,15 +5,14 @@ Olivia Zhang
 
 ## Load Packages and Data
 
-First, let’s load the necessary packages:
+Load the necessary packages:
 
 ``` r
 library(tidyverse) 
 library(skimr)
 ```
 
-Now, load the dataset. If your data isn’t ready yet, you can leave
-`eval = FALSE` for now and update it when needed.
+Now, load the dataset.
 
 ``` r
 uoe_art <- read_csv("data/uoe-art.csv")
@@ -47,10 +46,10 @@ uoe_art <- uoe_art %>%
 
 The warnings mean that: 1) there are some missing values in the date
 column, which is normal, because not all names have dates come after
-them; 2) not all things comes after the names in the parentheses is
-years or numbers, so as.numeric function doesn’t work for all items in
-year. It only work for items that only contains year as numbers without
-other strings.
+them; 2) not everything following the names in parentheses consists of
+years or numbers, so the as.numeric function doesn’t work for all items
+in the year info. It only works for items that contain only numeric
+years without additional strings.
 
 ## Exercise 11
 
@@ -91,16 +90,11 @@ data points.
 
 ## Exercise 12
 
-Make a histogram of years. Use a reasonable bin width. Do you see
-anything out of the ordinary?
-
 ``` r
 uoe_art %>%
   ggplot(aes(x = year)) +
-  geom_histogram()
+  geom_histogram(binwidth = 30)
 ```
-
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
     ## Warning: Removed 1575 rows containing non-finite outside the scale range
     ## (`stat_bin()`).
@@ -169,10 +163,8 @@ table(uoe_art$year)
 #plot
 uoe_art %>%
   ggplot(aes(x = year)) +
-  geom_histogram()
+  geom_histogram(binwidth = 20)
 ```
-
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
     ## Warning: Removed 1575 rows containing non-finite outside the scale range
     ## (`stat_bin()`).
@@ -216,13 +208,6 @@ not know all the artists that created the portraits and busts.
 
 ## Exercise 15
 
-Final question! How many art pieces have the word “child” in their
-title? See if you can figure it out, and ask for help if not.
-
-Hint: You can use a combination of filter() and str_detect(). You will
-want to read the help for str_detect() at a minimum, and consider how
-you might capture titles where the word appears as “child” and “Child”.
-
 ``` r
 child_count <- uoe_art %>%
   filter(
@@ -231,4 +216,4 @@ child_count <- uoe_art %>%
   count()
 ```
 
-There are 11 art pieces have the worl “child” in their title.
+There are 11 art pieces have the word “child” in their title.
